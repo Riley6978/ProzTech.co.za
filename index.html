@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>ProzTech</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {margin:0;font-family:Arial;background:#0f172a;color:#fff;}
+
+header {
+display:flex;justify-content:space-between;
+padding:15px;background:#020617;
+align-items:center;
+}
+
+/* LOGO */
+.logo {
+display:flex;
+align-items:center;
+font-size:22px;
+font-weight:bold;
+}
+
+.logo-icon {
+background:linear-gradient(45deg,#22c55e,#4ade80);
+color:#000;
+padding:6px 10px;
+border-radius:8px;
+margin-right:8px;
+box-shadow:0 0 10px #22c55e;
+}
+
+.logo-text {
+color:#22c55e;
+letter-spacing:1px;
+}
+
+nav a {margin:0 10px;cursor:pointer;}
+
+.products {
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;padding:20px;
+}
+
+.card {
+background:#1e293b;padding:20px;
+border-radius:10px;text-align:center;
+transition:0.3s;
+}
+
+.card:hover {transform:translateY(-5px);}
+
+button {
+background:#22c55e;border:none;
+padding:10px;border-radius:6px;
+cursor:pointer;margin-top:10px;
+}
+
+/* CART */
+.cart {
+position:fixed;
+top:80px;
+right:10px;
+background:#020617;
+padding:15px;
+border-radius:10px;
+width:260px;
+}
+
+.cart-item {font-size:14px;margin:5px 0;}
+
+.checkout {
+background:#25D366;
+width:100%;
+margin-top:10px;
+}
+
+/* PAYMENT */
+select {
+width:100%;
+padding:8px;
+margin-top:10px;
+border-radius:5px;
+}
+
+/* AUTH */
+.auth {
+display:none;
+text-align:center;
+padding:30px;
+}
+
+input {
+display:block;
+margin:10px auto;
+padding:10px;
+width:250px;
+}
+
+/* FLOAT */
+.whatsapp {
+position:fixed;
+bottom:20px;
+right:20px;
+background:#25D366;
+padding:15px;
+border-radius:50%;
+}
+
+/* NOTIFY */
+.notify {
+position:fixed;
+top:10px;
+right:10px;
+background:#22c55e;
+padding:10px;
+display:none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">
+<span class="logo-icon">🎬</span>
+<span class="logo-text">ProzTech</span>
+</div>
+
+<nav>
+<a onclick="showHome()">Home</a>
+<a onclick="showAuth()">Login</a>
+</nav>
+</header>
+
+<div class="notify" id="notify">Added to cart</div>
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+
+<div class="card">
+<h3>Netflix</h3>
+<p>$8</p>
+<button onclick="addCart('Netflix',8)">Add</button>
+</div>
+
+<div class="card">
+<h3>DSTV Stream</h3>
+<p>$3 / $6</p>
+<button onclick="addCart('DSTV Stream',6)">Add</button>
+</div>
+
+<div class="card">
+<h3>Showmax</h3>
+<p>$2</p>
+<button onclick="addCart('Showmax',2)">Add</button>
+</div>
+
+<div class="card">
+<h3>Prime Video</h3>
+<p>$4</p>
+<button onclick="addCart('Prime Video',4)">Add</button>
+</div>
+
+<div class="card">
+<h3>ChatGPT Plus</h3>
+<p>$7</p>
+<button onclick="addCart('ChatGPT Plus',7)">Add</button>
+</div>
+
+<div class="card">
+<h3>YouTube Premium</h3>
+<p>$3</p>
+<button onclick="addCart('YouTube Premium',3)">Add</button>
+</div>
+
+</section>
+
+<!-- CART -->
+<div class="cart">
+<h3>🛒 Cart</h3>
+
+<div id="cartItems"></div>
+
+<p>Total: $<span id="total">0</span></p>
+
+<select id="payment">
+<option value="">Select Payment</option>
+<option>Finance</option>
+<option>PayPal</option>
+<option>Voucher</option>
+<option>Bank Transfer</option>
+</select>
+
+<button class="checkout" onclick="checkout()">Checkout</button>
+</div>
+
+<!-- AUTH -->
+<div class="auth" id="auth">
+<h2>Login</h2>
+<input id="email" placeholder="Email">
+<input placeholder="Password">
+<button onclick="login()">Login</button>
+</div>
+
+<footer style="text-align:center;padding:20px;">
+<p>© 2026 ProzTech</p>
+<p>WhatsApp: 0737034884</p>
+<p>Payments: Finance | PayPal | Voucher | Bank</p>
+</footer>
+
+<a class="whatsapp" href="https://wa.me/27737034884">💬</a>
+
+<script>
+
+let cart = [];
+let total = 0;
+let user = "";
+
+/* ADD TO CART */
+function addCart(name, price){
+cart.push({name,price});
+total += price;
+
+document.getElementById("cartItems").innerHTML += 
+`<div class='cart-item'>${name} - $${price}</div>`;
+
+document.getElementById("total").innerText = total;
+
+let n = document.getElementById("notify");
+n.style.display="block";
+setTimeout(()=>n.style.display="none",1500);
+}
+
+/* CHECKOUT */
+function checkout(){
+
+let payment = document.getElementById("payment").value;
+
+if(cart.length==0){
+alert("Cart is empty");
+return;
+}
+
+if(payment==""){
+alert("Select payment method");
+return;
+}
+
+let orderID = "PT" + Math.floor(Math.random()*99999);
+
+let items = cart.map(i=>`${i.name} - $${i.price}`).join("%0A");
+
+let message = `🧾 ProzTech Order%0AOrder ID: ${orderID}%0AUser: ${user || "Guest"}%0APayment: ${payment}%0A%0AItems:%0A${items}%0A%0ATotal: $${total}`;
+
+let url = "https://wa.me/27737034884?text=" + message;
+
+window.open(url,"_blank");
+}
+
+/* LOGIN */
+function login(){
+user = document.getElementById("email").value;
+alert("Welcome " + user);
+showHome();
+}
+
+/* NAV */
+function showAuth(){
+document.getElementById("products").style.display="none";
+document.getElementById("auth").style.display="block";
+}
+
+function showHome(){
+document.getElementById("products").style.display="grid";
+document.getElementById("auth").style.display="none";
+}
+
+</script>
+
+</body>
+</html>
